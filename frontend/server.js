@@ -17,12 +17,12 @@ app.get('/', (req, res) => {
 
 // Rota para a página de cadastro
 app.get('/cadastro.html', (req, res) => {
-    res.sendFile(__dirname + '/public/cadastro.html'); 
+    res.sendFile(__dirname + '/cadastro.html'); 
 });
 
 // Rota para a página de login
 app.get('/login.html', (req, res) => {
-    res.sendFile(__dirname + '/public/login.html');
+    res.sendFile(__dirname + 'login.html');
 });
 
 // Configuração do Supabase
