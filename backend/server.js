@@ -30,7 +30,7 @@ const supabaseUrl = process.env.SUPABASE_URL;
 const supabaseKey = process.env.SUPABASE_KEY;
 const supabase = createClient(supabaseUrl, supabaseKey);
 
-
+// Verifica se as variáveis de ambiente estão definidas
 if (!supabaseUrl || !supabaseKey) {
     console.error('As variáveis SUPABASE_URL e SUPABASE_KEY não estão definidas.');
     process.exit(1);
@@ -38,7 +38,7 @@ if (!supabaseUrl || !supabaseKey) {
 
 app.use(bodyParser.json());
 
-
+// Configuração do Multer para lidar com uploads de arquivos
 const upload = multer({ storage: multer.memoryStorage() });
 
 // Cadastro de usuário
@@ -60,7 +60,7 @@ app.post('/login', async (req, res) => {
 
     const { data, error } = await supabase
         .from('users')
-        .select('id, username')  
+        .select('id, username')  // Seleciona apenas os campos necessários
         .eq('username', user)
         .eq('password', password)
         .single();
@@ -71,7 +71,7 @@ app.post('/login', async (req, res) => {
         return res.status(400).json({ error: 'Usuário ou senha incorretos' });
     }
 
-   
+    // Ajuste o campo para 'username' se for o nome de usuário, em vez de 'name'
     res.json({ message: 'Login realizado com sucesso!', user: { id: data.id, name: data.username } });
 });
 
@@ -131,4 +131,42 @@ app.get('/publications', async (req, res) => {
 
 app.listen(port, () => {
     console.log(`Servidor rodando em http://localhost:${port}`);
+});
+
+
+app.post('/comments', async (req, res) => {
+    const { publication_id, user_id, comment } = req.body;
+
+    try {
+        const { data, error } = await supabase
+            .from('comments')
+            .insert([{ publication_id, user_id, comment }]);
+
+        if (error) throw error;
+
+        res.status(201).json({ message: 'Comentário adicionado com sucesso!', comment: data });
+    } catch (error) {
+        console.error('Erro ao adicionar comentário:', error);
+        res.status(400).json({ error: error.message });
+    }
+});
+
+
+app.get('/comments/:publication_id', async (req, res) => {
+    const { publication_id } = req.params;
+
+    try {
+        const { data, error } = await supabase
+            .from('comments')
+            .select('*, users(username)')
+            .eq('publication_id', publication_id)
+            .order('created_at', { ascending: true });
+
+        if (error) throw error;
+
+        res.json(data);
+    } catch (error) {
+        console.error('Erro ao obter comentários:', error);
+        res.status(400).json({ error: error.message });
+    }
 });
