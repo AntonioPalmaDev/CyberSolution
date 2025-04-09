@@ -12,17 +12,17 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.get('/', (req, res) => {
-    res.redirect('/cadastro.html');
+    res.redirect('/public/cadastro.html');
 });
 
 // Rota para a página de cadastro
 app.get('/cadastro.html', (req, res) => {
-    res.sendFile(__dirname + '/cadastro.html'); 
+    res.sendFile(__dirname + '/public/cadastro.html'); 
 });
 
 // Rota para a página de login
 app.get('/login.html', (req, res) => {
-    res.sendFile(__dirname + 'login.html');
+    res.sendFile(__dirname + '/public/login.html');
 });
 
 // Configuração do Supabase
